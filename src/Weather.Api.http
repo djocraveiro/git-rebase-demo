@@ -1,0 +1,4 @@
+@Weather_HostAddress = http://localhost:5171
+
+GET {{Weather_HostAddress}}/api/weatherforecast?date=2025-08-01T12:00:00Z&city=Coimbra
+Accept: application/json
