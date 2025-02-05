@@ -26,10 +26,7 @@ public sealed class WeatherForecastController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(WeatherForecastResponse))]
     public IActionResult Get([FromQuery] WeatherForecastRequest request)
     {
-        var data = new List<WeatherForecast>
-        {
-            _weatherForecastService.GetForecast(request.Date, request.City)
-        };
+        var data = _weatherForecastService.GetForecast(request.Date, request.City);
 
         return Ok(new WeatherForecastResponse
         {
