@@ -34,5 +34,20 @@ public sealed class WeatherForecastController : ControllerBase
             Data = data
         });
     }
+
+    [HttpPost("many")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(WeatherForecastPageResponse))]
+    public IActionResult Get([FromBody] WeatherForecastPageRequest request)
+    {
+        var data = _weatherForecastService.GetForecastPage(request.Date, request.PageSize);
+
+        return Ok(new WeatherForecastPageResponse
+        {
+            Request = request,
+            Data = data
+        });
+    }
     #endregion
 }

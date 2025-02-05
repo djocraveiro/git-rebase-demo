@@ -1,4 +1,15 @@
 @Weather_HostAddress = http://localhost:5171
 
+### Get weather forecast by date and city
 GET {{Weather_HostAddress}}/api/weatherforecast?date=2025-08-01T12:00:00Z&city=Coimbra
 Accept: application/json
+###
+
+### Get weather forecast page
+POST {{Weather_HostAddress}}/api/weatherforecast/many
+Content-Type: application/json
+{
+    "date": "2025-08-01T12:00:00Z",
+    "pageSize": 3
+}
+###

@@ -3,12 +3,14 @@
 internal sealed class WeatherForecastService : IWeatherForecastService
 {
     #region Fields
+    private readonly Faker _faker;
     private readonly Faker<WeatherForecast> _weatherForecastBuilder;
     #endregion
 
     #region Constructors
     public WeatherForecastService()
     {
+        _faker = new("en");
         _weatherForecastBuilder = new Faker<WeatherForecast>()
             .RuleFor(x => x.Date, (f) => DateTime.UtcNow)
             .RuleFor(x => x.City, (f => f.Address.City()))
@@ -18,8 +20,18 @@ internal sealed class WeatherForecastService : IWeatherForecastService
     #endregion
 
     #region Public Methods
+    public List<WeatherForecast> GetForecastPage(DateTime date, int pageSize)
+    {
+        return Enumerable.Range(1, pageSize)
+            .Select(i => GetForecast(date, _faker.Address.City()))
+            .ToList();
+    }
+
     public WeatherForecast GetForecast(DateTime date, string city)
     {
+        // simulate an heavy task processing
+        Thread.Sleep(TimeSpan.FromSeconds(1));
+
         return _weatherForecastBuilder
             .RuleFor(x => x.Date, (f) => date)
             .RuleFor(x => x.City, (f) => city)
