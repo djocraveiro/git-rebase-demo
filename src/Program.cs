@@ -1,6 +1,4 @@
-﻿using Weather.Api.Services;
-
-namespace Weather;
+﻿namespace Weather;
 
 public static class Program
 {
