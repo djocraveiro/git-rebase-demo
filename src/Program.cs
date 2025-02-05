@@ -30,6 +30,7 @@ public static class Program
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
 
+        builder.Services.AddMemoryCache();
         builder.Services.AddTransient<IWeatherForecastService, WeatherForecastService>();
 
         return builder;

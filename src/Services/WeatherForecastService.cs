@@ -1,14 +1,19 @@
-﻿namespace Weather.Api.Services;
+﻿using Microsoft.Extensions.Caching.Memory;
+
+namespace Weather.Api.Services;
 
 internal sealed class WeatherForecastService : IWeatherForecastService
 {
     #region Fields
     private readonly Faker<WeatherForecast> _weatherForecastBuilder;
+    private readonly IMemoryCache _memoryCache;
     #endregion
 
     #region Constructors
-    public WeatherForecastService()
+    public WeatherForecastService(IMemoryCache memoryCache)
     {
+        _memoryCache = memoryCache;
+
         _weatherForecastBuilder = new Faker<WeatherForecast>()
             .RuleFor(x => x.Date, (f) => DateTime.UtcNow)
             .RuleFor(x => x.City, (f => f.Address.City()))
@@ -20,14 +25,36 @@ internal sealed class WeatherForecastService : IWeatherForecastService
     #region Public Methods
     public WeatherForecast GetForecast(DateTime date, string city)
     {
+        WeatherForecast forecast = _memoryCache.GetOrCreate(
+            GetCacheKey(date, city),
+            (cacheEntry) =>
+            {
+                WeatherForecast value = CreateForecast(date, city);
+
+                cacheEntry.Value = value;
+                cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
+
+                return value;
+            })!;
+
+        return forecast;
+    }
+    #endregion
+
+    #region Private Methods
+    private static string GetCacheKey(DateTime date, string city) => $"{date:o}:{city.ToLowerInvariant()}";
+
+    private WeatherForecast CreateForecast(DateTime date, string city)
+    {
+        // simulate an heavy task processing
+        Thread.Sleep(TimeSpan.FromSeconds(1));
+
         return _weatherForecastBuilder
             .RuleFor(x => x.Date, (f) => date)
             .RuleFor(x => x.City, (f) => city)
             .Generate();
     }
-    #endregion
 
-    #region Private Methods
     private static string GetWeatherSummary(int temperatureCelcius)
     {
         if (temperatureCelcius <= 0)
