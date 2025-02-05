@@ -4,5 +4,5 @@ public sealed record WeatherForecastResponse
 {
     public required WeatherForecastRequest Request { get; init; }
 
-    public required List<WeatherForecast> Data { get; init; } = new();
+    public required WeatherForecast Data { get; init; }
 }

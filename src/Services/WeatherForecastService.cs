@@ -5,6 +5,7 @@ namespace Weather.Api.Services;
 internal sealed class WeatherForecastService : IWeatherForecastService
 {
     #region Fields
+    private readonly Faker _faker;
     private readonly Faker<WeatherForecast> _weatherForecastBuilder;
     private readonly IMemoryCache _memoryCache;
     #endregion
@@ -14,6 +15,7 @@ internal sealed class WeatherForecastService : IWeatherForecastService
     {
         _memoryCache = memoryCache;
 
+        _faker = new("en");
         _weatherForecastBuilder = new Faker<WeatherForecast>()
             .RuleFor(x => x.Date, (f) => DateTime.UtcNow)
             .RuleFor(x => x.City, (f => f.Address.City()))
@@ -23,6 +25,13 @@ internal sealed class WeatherForecastService : IWeatherForecastService
     #endregion
 
     #region Public Methods
+    public List<WeatherForecast> GetForecastPage(DateTime date, int pageSize)
+    {
+        return Enumerable.Range(1, pageSize)
+            .Select(i => GetForecast(date, _faker.Address.City()))
+            .ToList();
+    }
+
     public WeatherForecast GetForecast(DateTime date, string city)
     {
         WeatherForecast forecast = _memoryCache.GetOrCreate(
